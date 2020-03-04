@@ -96,41 +96,41 @@ e e e e e e e e e e e e e e e e
 `
     //% blockIdentity=images._tile
     export const tile5 = img`
-f f f f f f f f f f f f f f f 8 
-f f f f f f f f f 8 f f f f f 8 
-f f f f f f f f f f f f f f f 8 
-f f 8 f f f f f f f f f f f f 8 
-f f f f f f f 8 f f f f f f f 8 
-f f f f f f f f f f f f 8 f f 8 
-f f f f f f f f f f f f f f f 8 
-f f f f f f f f 8 f f f f f f 8 
-f f 8 f f f f f f f f f f f f 8 
-f f f f f f f f f f f f f 8 f 8 
-f f f f f f f f f f f f f f f 8 
-f f f f f f f f f f f f f f f 8 
-f f f f f f f f f f f f 8 f f 8 
-f f 8 f f f 8 f f f f f f f f 8 
-f f f f f f f f f f f f f f f 8 
-f f f f f f f f f f f f f f f 8 
+d d d d d d d d d d d d d d d 8 
+d d d d d d d d d 8 d d d d d 8 
+d d d d d d d d d d d d d d d 8 
+d d 8 d d d d d d d d d d d d 8 
+d d d d d d d 8 d d d d d d d 8 
+d d d d d d d d d d d d 8 d d 8 
+d d d d d d d d d d d d d d d 8 
+d d d d d d d d 8 d d d d d d 8 
+d d 8 d d d d d d d d d d d d 8 
+d d d d d d d d d d d d d 8 d 8 
+d d d d d d d d d d d d d d d 8 
+d d d d d d d d d d d d d d d 8 
+d d d d d d d d d d d d 8 d d 8 
+d d 8 d d d 8 d d d d d d d d 8 
+d d d d d d d d d d d d d d d 8 
+d d d d d d d d d d d d d d d 8 
 `
     //% blockIdentity=images._tile
     export const tile6 = img`
-2 f f f f f f f f f f f f f f f 
-2 f f f f f f f f 2 f f f f f f 
-2 f f f f f f f f f f f f f f f 
-2 f 2 f f f f f f f f f f f f f 
-2 f f f f f f 2 f f f f f f f f 
-2 f f f f f f f f f f f 2 f f f 
-2 f f f f f f f f f f f f f f f 
-2 f f f f f f f 2 f f f f f f f 
-2 f 2 f f f f f f f f f f f f f 
-2 f f f f f f f f f f f f 2 f f 
-2 f f f f f f f f f f f f f f f 
-2 f f f f f f f f f f f f f f f 
-2 f f f f f f f f f f f 2 f f f 
-2 f 2 f f f 2 f f f f f f f f f 
-2 f f f f f f f f f f f f f f f 
-2 f f f f f f f f f f f f f f f 
+2 d d d d d d d d d d d d d d d 
+2 d d d d d d d d 2 d d d d d d 
+2 d d d d d d d d d d d d d d d 
+2 d 2 d d d d d d d d d d d d d 
+2 d d d d d d 2 d d d d d d d d 
+2 d d d d d d d d d d d 2 d d d 
+2 d d d d d d d d d d d d d d d 
+2 d d d d d d d 2 d d d d d d d 
+2 d 2 d d d d d d d d d d d d d 
+2 d d d d d d d d d d d d 2 d d 
+2 d d d d d d d d d d d d d d d 
+2 d d d d d d d d d d d d d d d 
+2 d d d d d d d d d d d 2 d d d 
+2 d 2 d d d 2 d d d d d d d d d 
+2 d d d d d d d d d d d d d d d 
+2 d d d d d d d d d d d d d d d 
 `
     //% blockIdentity=images._tile
     export const tile7 = img`
