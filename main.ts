@@ -6,6 +6,8 @@ namespace SpriteKind {
     export const box = SpriteKind.create()
     export const box1 = SpriteKind.create()
     export const box2 = SpriteKind.create()
+    export const ammocount = SpriteKind.create()
+    export const dead = SpriteKind.create()
 }
 namespace myTiles {
     //% blockIdentity=images._tile
@@ -296,12 +298,114 @@ f 9 1 1 1 9 9 9 9 f
         gem.setPosition(Math.randomRange(player2.x - 5, player2.x + 5), Math.randomRange(player2.y - 5, player2.x + 5))
     }
     p2bag = 0
-    player2.startEffect(effects.fire, 200)
+    player2.startEffect(effects.fire, 2000)
+    controller.player2.moveSprite(player2, 0, 0)
+    player2.setKind(SpriteKind.dead)
+    pause(2000)
+    player2.setKind(SpriteKind.Player2)
     player2.setPosition(150, Math.randomRange(20, 110))
+    controller.player2.moveSprite(player2, 75, 75)
 })
 sprites.onOverlap(SpriteKind.Player2, SpriteKind.box2, function (sprite, otherSprite) {
     info.player2.changeScoreBy(p2bag)
     p2bag = 0
+})
+controller.player1.onButtonEvent(ControllerButton.B, ControllerButtonEvent.Pressed, function () {
+    if (p1ammo > 0) {
+        projectile1 = sprites.createProjectileFromSprite(img`
+. 2 2 2 2 2 . 
+2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 
+. 2 2 2 2 2 . 
+`, player1, -150, 0)
+        projectile1.setKind(SpriteKind.prj1)
+        p1ammo += -1
+    }
+})
+controller.player2.onButtonEvent(ControllerButton.A, ControllerButtonEvent.Pressed, function () {
+    if (p2ammo > 0) {
+        projectile2 = sprites.createProjectileFromSprite(img`
+. 8 8 8 8 8 . 
+8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 
+. 8 8 8 8 8 . 
+`, player2, -150, 0)
+        projectile2.setKind(SpriteKind.prj2)
+        p2ammo += -1
+    }
+})
+sprites.onOverlap(SpriteKind.Player2, SpriteKind.Food, function (sprite, otherSprite) {
+    otherSprite.destroy(effects.fountain, 200)
+    p2bag += 1
+})
+controller.player2.onButtonEvent(ControllerButton.B, ControllerButtonEvent.Pressed, function () {
+    if (p2ammo > 0) {
+        projectile2 = sprites.createProjectileFromSprite(img`
+. 8 8 8 8 8 . 
+8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 
+. 8 8 8 8 8 . 
+`, player2, 150, 0)
+        projectile2.setKind(SpriteKind.prj2)
+        p2ammo += -1
+    }
+})
+controller.player1.onButtonEvent(ControllerButton.A, ControllerButtonEvent.Pressed, function () {
+    if (p1ammo > 0) {
+        projectile1 = sprites.createProjectileFromSprite(img`
+. 2 2 2 2 2 . 
+2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 
+. 2 2 2 2 2 . 
+`, player1, 150, 0)
+        projectile1.setKind(SpriteKind.prj1)
+        p1ammo += -1
+    }
+})
+sprites.onOverlap(SpriteKind.Player1, SpriteKind.box1, function (sprite, otherSprite) {
+    info.player1.changeScoreBy(p1Bag)
+    p1Bag = 0
+})
+sprites.onOverlap(SpriteKind.Player1, SpriteKind.prj2, function (sprite, otherSprite) {
+    for (let index = 0; index < p1Bag; index++) {
+        gem = sprites.create(img`
+. . . . f f . . . . 
+. . . f 9 9 f . . . 
+. . f 9 9 9 9 f . . 
+. f 9 9 9 9 1 9 f . 
+f 9 9 9 9 1 1 1 9 f 
+f 9 9 1 9 9 1 9 9 f 
+f 9 9 9 9 9 9 9 9 f 
+f 9 9 9 9 9 9 9 9 f 
+f 9 9 1 9 9 9 1 9 f 
+f 9 1 1 1 9 9 9 9 f 
+. f 9 1 9 9 9 9 f . 
+. . f 9 9 9 9 f . . 
+. . . f 9 9 f . . . 
+. . . . f f . . . . 
+`, SpriteKind.Food)
+        gem.setPosition(Math.randomRange(player1.x - 5, player1.x + 5), Math.randomRange(player1.y - 5, player1.x + 5))
+    }
+    p1Bag = 0
+    player1.startEffect(effects.fire, 2000)
+    controller.player1.moveSprite(player1, 0, 0)
+    player1.setKind(SpriteKind.dead)
+    pause(2000)
+    player1.setKind(SpriteKind.Player1)
+    player1.setPosition(10, Math.randomRange(20, 110))
+    controller.player1.moveSprite(player1, 75, 75)
 })
 function gameStart () {
     player1 = sprites.create(img`
@@ -401,117 +505,214 @@ b b b b b b b b b b b b b b b b
 . b b . . . . . . . . . . b b . 
 `, SpriteKind.box2)
     chest2.setPosition(152, 16)
+    p1count1 = sprites.create(img`
+. 2 2 2 2 2 . 
+2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 
+. 2 2 2 2 2 . 
+`, SpriteKind.ammocount)
+    p1count2 = sprites.create(img`
+. 2 2 2 2 2 . 
+2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 
+. 2 2 2 2 2 . 
+`, SpriteKind.ammocount)
+    p1count3 = sprites.create(img`
+. 2 2 2 2 2 . 
+2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 
+. 2 2 2 2 2 . 
+`, SpriteKind.ammocount)
+    p1count1.setPosition(5, 115)
+    p1count2.setPosition(15, 115)
+    p1count3.setPosition(25, 115)
+    p2count1 = sprites.create(img`
+. 8 8 8 8 8 . 
+8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 
+. 8 8 8 8 8 . 
+`, SpriteKind.ammocount)
+    p2count2 = sprites.create(img`
+. 8 8 8 8 8 . 
+8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 
+. 8 8 8 8 8 . 
+`, SpriteKind.ammocount)
+    p2count3 = sprites.create(img`
+. 8 8 8 8 8 . 
+8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 
+. 8 8 8 8 8 . 
+`, SpriteKind.ammocount)
+    p2count1.setPosition(155, 115)
+    p2count2.setPosition(145, 115)
+    p2count3.setPosition(135, 115)
 }
-controller.player1.onButtonEvent(ControllerButton.B, ControllerButtonEvent.Pressed, function () {
-    projectile1 = sprites.createProjectileFromSprite(img`
-. 2 2 2 2 2 . 
-2 2 2 2 2 2 2 
-2 2 2 2 2 2 2 
-2 2 2 2 2 2 2 
-2 2 2 2 2 2 2 
-2 2 2 2 2 2 2 
-. 2 2 2 2 2 . 
-`, player1, -150, 0)
-    projectile1.setKind(SpriteKind.prj1)
-})
-controller.player2.onButtonEvent(ControllerButton.A, ControllerButtonEvent.Pressed, function () {
-    projectile2 = sprites.createProjectileFromSprite(img`
-. 8 8 8 8 8 . 
-8 8 8 8 8 8 8 
-8 8 8 8 8 8 8 
-8 8 8 8 8 8 8 
-8 8 8 8 8 8 8 
-8 8 8 8 8 8 8 
-. 8 8 8 8 8 . 
-`, player2, -150, 0)
-    projectile2.setKind(SpriteKind.prj2)
-})
-sprites.onOverlap(SpriteKind.Player2, SpriteKind.Food, function (sprite, otherSprite) {
-    otherSprite.destroy(effects.fountain, 200)
-    p2bag += 1
-})
-controller.player2.onButtonEvent(ControllerButton.B, ControllerButtonEvent.Pressed, function () {
-    projectile2 = sprites.createProjectileFromSprite(img`
-. 8 8 8 8 8 . 
-8 8 8 8 8 8 8 
-8 8 8 8 8 8 8 
-8 8 8 8 8 8 8 
-8 8 8 8 8 8 8 
-8 8 8 8 8 8 8 
-. 8 8 8 8 8 . 
-`, player2, 150, 0)
-    projectile2.setKind(SpriteKind.prj2)
-})
-controller.player1.onButtonEvent(ControllerButton.A, ControllerButtonEvent.Pressed, function () {
-    projectile1 = sprites.createProjectileFromSprite(img`
-. 2 2 2 2 2 . 
-2 2 2 2 2 2 2 
-2 2 2 2 2 2 2 
-2 2 2 2 2 2 2 
-2 2 2 2 2 2 2 
-2 2 2 2 2 2 2 
-. 2 2 2 2 2 . 
-`, player1, 150, 0)
-    projectile1.setKind(SpriteKind.prj1)
-})
-sprites.onOverlap(SpriteKind.Player1, SpriteKind.box1, function (sprite, otherSprite) {
-    info.player1.changeScoreBy(p1Bag)
-    p1Bag = 0
-})
-sprites.onOverlap(SpriteKind.Player1, SpriteKind.prj2, function (sprite, otherSprite) {
-    for (let index = 0; index < p1Bag; index++) {
-        gem = sprites.create(img`
-. . . . f f . . . . 
-. . . f 9 9 f . . . 
-. . f 9 9 9 9 f . . 
-. f 9 9 9 9 1 9 f . 
-f 9 9 9 9 1 1 1 9 f 
-f 9 9 1 9 9 1 9 9 f 
-f 9 9 9 9 9 9 9 9 f 
-f 9 9 9 9 9 9 9 9 f 
-f 9 9 1 9 9 9 1 9 f 
-f 9 1 1 1 9 9 9 9 f 
-. f 9 1 9 9 9 9 f . 
-. . f 9 9 9 9 f . . 
-. . . f 9 9 f . . . 
-. . . . f f . . . . 
-`, SpriteKind.Food)
-        gem.setPosition(Math.randomRange(player1.x - 5, player1.x + 5), Math.randomRange(player1.y - 5, player1.x + 5))
-    }
-    p1Bag = 0
-    player1.startEffect(effects.fire, 200)
-    player1.setPosition(10, Math.randomRange(20, 110))
-})
 sprites.onOverlap(SpriteKind.Player1, SpriteKind.Food, function (sprite, otherSprite) {
     otherSprite.destroy(effects.fountain, 200)
     p1Bag += 1
 })
-let p1Bag = 0
-let projectile2: Sprite = null
-let projectile1: Sprite = null
+let p2count3: Sprite = null
+let p2count2: Sprite = null
+let p2count1: Sprite = null
+let p1count3: Sprite = null
+let p1count2: Sprite = null
+let p1count1: Sprite = null
 let chest2: Sprite = null
 let chest1: Sprite = null
+let p1Bag = 0
+let projectile2: Sprite = null
+let p2ammo = 0
 let player1: Sprite = null
+let projectile1: Sprite = null
+let p1ammo = 0
 let player2: Sprite = null
 let gem: Sprite = null
 let p2bag = 0
-game.showLongText("Fill your chest with 5 gems. The first person with a full chest wins! Be careful. If you get shot you will drop all the gems you are carring! Press A to start!", DialogLayout.Full)
+scene.setBackgroundImage(img`
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c 9 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 9 c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c 9 9 9 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 9 9 9 c c c c c c c c c c c c c 
+c c c c c c c c c c c c c 9 9 9 9 9 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 9 9 9 9 9 c c c c c c c c c c c c 
+c c c c c c c c c c c c 9 9 9 9 9 9 9 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 9 9 9 9 9 9 9 c c c c c c c c c c c 
+c c c c c c c c c c c 9 9 9 9 9 9 9 9 9 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 9 9 9 9 9 9 9 9 9 c c c c c c c c c c 
+c c c c c c c c c c 9 9 9 9 9 9 9 1 9 9 9 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 9 9 9 1 9 9 9 9 9 9 9 c c c c c c c c c 
+c c c c c c c c c c 9 9 9 9 9 9 1 1 1 9 9 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 9 9 1 1 1 9 9 1 9 9 9 c c c c c c c c c 
+c c c c c c c c c c 9 9 1 9 9 9 9 1 9 9 9 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 9 9 9 1 9 9 9 9 9 9 9 c c c c c c c c c 
+c c c c c c c c c c 9 9 9 9 9 9 9 9 9 9 9 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 9 9 9 9 9 9 9 9 9 9 9 c c c c c c c c c 
+c c c c c c c c c c 9 9 9 9 9 9 9 9 9 9 9 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 9 9 9 9 9 9 9 9 9 9 9 c c c c c c c c c 
+c c c c c c c c c c 9 9 9 9 9 9 9 9 9 9 9 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 9 9 9 9 9 9 9 1 9 1 9 c c c c c c c c c 
+c c c c c c c c c c 9 9 9 1 9 9 1 9 9 9 9 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 9 9 9 9 9 9 9 9 1 9 9 c c c c c c c c c 
+c c c c c c c c c c 9 9 1 9 9 9 9 9 9 9 9 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 9 9 9 1 9 9 9 9 1 9 9 c c c c c c c c c 
+c c c c c c c c c c 9 1 9 1 9 9 9 9 9 9 9 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 9 9 9 9 9 9 9 9 9 9 9 c c c c c c c c c 
+c c c c c c c c c c c 9 9 9 9 9 9 9 9 9 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 9 9 9 9 9 9 9 9 9 c c c c c c c c c c 
+c c c c c c c c c c c c 9 9 9 9 9 9 9 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 9 9 9 9 9 9 9 c c c c c c c c c c c 
+c c c c c c c c c c c c c 9 9 9 9 9 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 9 9 9 9 9 c c c c c c c c c c c c 
+c c c c c c c c c c c c c c 9 9 9 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 9 9 9 c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c 9 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 9 c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 6 6 6 6 6 6 c c c c c c c c c c c c c c c c c c 6 6 6 6 6 6 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 6 6 6 6 6 6 c c c c c c c c c c c c c c c c c c 6 6 6 6 6 6 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 6 6 6 6 6 6 c c c c c c c c c c c c c c c c c c 6 6 6 6 6 6 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 6 6 6 6 6 6 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 6 6 6 6 6 6 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 6 6 6 6 6 6 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 6 6 6 6 6 6 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 6 6 6 6 6 6 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 6 6 6 6 6 6 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 c c c c c 6 6 6 6 6 6 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 c c c c c 6 6 6 6 6 6 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 c c c c c 6 6 6 6 6 6 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 c c c c c 6 6 6 6 6 6 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 7 7 7 7 c c c c c c c c c c c c c 7 7 7 7 c c c c c 6 6 6 6 6 6 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 7 7 7 7 c c c c c c c c c c c c c 7 7 7 7 c c c c c 6 6 6 6 6 6 c c c c c c c c c c c c c 6 6 6 6 6 6 6 6 6 6 6 c c c c c 7 7 7 7 c c c c c c c c c c c c c 7 7 7 7 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 7 7 7 7 c c c c c c c c c c c c c 7 7 7 7 c c c c c 6 6 6 6 6 6 c c c c c c c c c c c c c 6 6 6 6 6 6 6 6 6 6 6 c c c c c 7 7 7 7 c c c c c c c c c c c c c 7 7 7 7 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 7 7 7 7 c c c c c c c c c c c c c c c c c c c c c c 6 6 6 6 6 6 c c c c c c c c c c c c c 6 6 6 6 6 6 6 6 6 6 6 c c c c c 7 7 7 7 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 7 7 7 7 c c c c c c c c c c c c c c c c c c c c c c 6 6 6 6 6 6 c c c c c c c c c c c c c 6 6 6 6 6 6 6 6 6 6 6 c c c c c 7 7 7 7 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 7 7 7 7 c c c c c c c c c c c c c c c c c c c c c c 6 6 6 6 6 6 c c c c c c c c c c c c c 6 6 6 6 6 6 6 6 6 6 6 c c c c c 7 7 7 7 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 7 7 7 7 c c c c c c c c c c 7 7 7 7 7 7 7 c c c c c 6 6 6 6 6 6 c c c c c c c c c c c c c 6 6 6 6 6 6 6 6 6 6 6 c c c c c 7 7 7 7 c c c c c c c c c c 7 7 7 7 7 7 7 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 7 7 7 7 c c c c c c c c c c 7 7 7 7 7 7 7 c c c c c 6 6 6 6 6 6 c c c c c c c c c c c c c c c c c c 6 6 6 6 6 6 c c c c c 7 7 7 7 c c c c c c c c c c 7 7 7 7 7 7 7 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 7 7 7 7 c c c c c c c c c c 7 7 7 7 7 7 7 c c c c c 6 6 6 6 6 6 c c c c c c c c c c c c c c c c c c 6 6 6 6 6 6 c c c c c 7 7 7 7 c c c c c c c c c c 7 7 7 7 7 7 7 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 7 7 7 7 c c c c c c c c c c 7 7 7 7 7 7 7 c c c c c 6 6 6 6 6 6 c c c c c c c c c c c c c c c c c c 6 6 6 6 6 6 c c c c c 7 7 7 7 c c c c c c c c c c 7 7 7 7 7 7 7 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 7 7 7 7 c c c c c c c c c c c c c c 7 7 7 c c c c c 6 6 6 6 6 6 c c c c c c c c c c c c c c c c c c 6 6 6 6 6 6 c c c c c 7 7 7 7 c c c c c c c c c c c c c 7 7 7 7 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 7 7 7 7 c c c c c c c c c c c c c c 7 7 7 c c c c c 6 6 6 6 6 6 c c c c c c c c c c c c c c c c c c 6 6 6 6 6 6 c c c c c 7 7 7 7 c c c c c c c c c c c c c 7 7 7 7 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 7 7 7 7 c c c c c c c c c c c c c c 7 7 7 c c c c c 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 c c c c c 7 7 7 7 c c c c c c c c c c c c c 7 7 7 7 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 c c c c c 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 c c c c c 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 c c c c c 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 c c c c c 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 c c c c c 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 c c c c c 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 c c c c c 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 6 c c c c c 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
+`)
+game.showLongText("Fill your chest with 5 gems. The first person with a full chest wins!", DialogLayout.Bottom)
+game.showLongText("Be careful. If you get shot you will drop all the gems you are holding! Press A to start!", DialogLayout.Bottom)
 gameStart()
-forever(function () {
-    if (info.player2.score() >= 5) {
-        game.showLongText("Player 2 Wins! Press A to play again!", DialogLayout.Bottom)
-        if (controller.A.isPressed()) {
-            game.reset()
-        }
-    }
-    if (info.player1.score() >= 5) {
-        game.showLongText("Player 1 Wins! Press A to play again!", DialogLayout.Bottom)
-        if (controller.A.isPressed()) {
-            game.reset()
-        }
-    }
-})
-game.onUpdateInterval(1000, function () {
+game.onUpdateInterval(10000, function () {
     gem = sprites.create(img`
 . . . . f f . . . . 
 . . . f 9 9 f . . . 
@@ -529,4 +730,144 @@ f 9 1 1 1 9 9 9 9 f
 . . . . f f . . . . 
 `, SpriteKind.Food)
     gem.setPosition(Math.randomRange(65, 95), Math.randomRange(45, 75))
+})
+forever(function () {
+    if (info.player2.score() >= 5) {
+        game.showLongText("Player 2 Wins! Press A to play again!", DialogLayout.Bottom)
+        if (controller.A.isPressed()) {
+            game.reset()
+        }
+    }
+    if (info.player1.score() >= 5) {
+        game.showLongText("Player 1 Wins! Press A to play again!", DialogLayout.Bottom)
+        if (controller.A.isPressed()) {
+            game.reset()
+        }
+    }
+    if (p1ammo == 0) {
+        p1count1.setImage(img`
+. b b b b b . 
+b b b b b b b 
+b b b b b b b 
+b b b b b b b 
+b b b b b b b 
+b b b b b b b 
+. b b b b b . 
+`)
+    } else if (p1ammo == 1) {
+        p1count2.setImage(img`
+. b b b b b . 
+b b b b b b b 
+b b b b b b b 
+b b b b b b b 
+b b b b b b b 
+b b b b b b b 
+. b b b b b . 
+`)
+    } else if (p1ammo == 2) {
+        p1count3.setImage(img`
+. b b b b b . 
+b b b b b b b 
+b b b b b b b 
+b b b b b b b 
+b b b b b b b 
+b b b b b b b 
+. b b b b b . 
+`)
+    } else if (p1ammo == 3) {
+        p1count1.setImage(img`
+. 2 2 2 2 2 . 
+2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 
+. 2 2 2 2 2 . 
+`)
+        p1count2.setImage(img`
+. 2 2 2 2 2 . 
+2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 
+. 2 2 2 2 2 . 
+`)
+        p1count3.setImage(img`
+. 2 2 2 2 2 . 
+2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 
+2 2 2 2 2 2 2 
+. 2 2 2 2 2 . 
+`)
+    }
+    if (p2ammo == 0) {
+        p2count1.setImage(img`
+. b b b b b . 
+b b b b b b b 
+b b b b b b b 
+b b b b b b b 
+b b b b b b b 
+b b b b b b b 
+. b b b b b . 
+`)
+    } else if (p2ammo == 1) {
+        p2count2.setImage(img`
+. b b b b b . 
+b b b b b b b 
+b b b b b b b 
+b b b b b b b 
+b b b b b b b 
+b b b b b b b 
+. b b b b b . 
+`)
+    } else if (p2ammo == 2) {
+        p2count3.setImage(img`
+. b b b b b . 
+b b b b b b b 
+b b b b b b b 
+b b b b b b b 
+b b b b b b b 
+b b b b b b b 
+. b b b b b . 
+`)
+    } else if (p2ammo == 3) {
+        p2count1.setImage(img`
+. 8 8 8 8 8 . 
+8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 
+. 8 8 8 8 8 . 
+`)
+        p2count2.setImage(img`
+. 8 8 8 8 8 . 
+8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 
+. 8 8 8 8 8 . 
+`)
+        p2count3.setImage(img`
+. 8 8 8 8 8 . 
+8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 
+8 8 8 8 8 8 8 
+. 8 8 8 8 8 . 
+`)
+    }
+})
+forever(function () {
+    player1.say(convertToText(p1Bag))
+    player2.say(convertToText(p2bag))
+})
+game.onUpdateInterval(3000, function () {
+    p2ammo = 3
+    p1ammo = 3
 })
