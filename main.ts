@@ -309,9 +309,48 @@ f 9 1 1 1 9 9 9 9 f
 sprites.onOverlap(SpriteKind.Player2, SpriteKind.box2, function (sprite, otherSprite) {
     info.player2.changeScoreBy(p2bag)
     p2bag = 0
+    chest2.setImage(img`
+. . b b b b b b b b b b b b . . 
+. b e 4 4 4 4 4 4 4 4 4 4 e b . 
+b e 4 4 4 4 4 4 4 4 4 4 4 4 e b 
+b e 4 4 4 4 4 4 4 4 4 4 4 4 e b 
+b e 4 4 4 4 4 4 4 4 4 4 4 4 e b 
+b e e 4 4 4 4 4 4 4 4 4 4 e e b 
+b e e e e e e e e e e e e e e b 
+b e e e e e e e e e e e e e e b 
+b b b b b b b d d b b b b b b b 
+c b b b b b b c c b b b b b b c 
+c c c c c c b c c b c c c c c c 
+b e e e e e c b b c e e e e e b 
+b e e e e e e e e e e e e e e b 
+b c e e e e e e e e e e e e c b 
+b b b b b b b b b b b b b b b b 
+. b b . . . . . . . . . . b b . 
+`)
+    chest2.setKind(SpriteKind.dead)
+    pause(15000)
+    chest2.setImage(img`
+. b b b b b b b b b b b b b b . 
+b e 4 4 4 4 4 4 4 4 4 4 4 4 4 b 
+b e 4 4 4 4 4 4 4 4 4 4 4 4 e b 
+b e e 4 4 4 4 4 4 4 4 4 4 e e b 
+b b b b b b b d d b b b b b b b 
+. b b b b b b c c b b b b b b . 
+b c c c c c b c c b c c c c c b 
+b c c c c c c b b c c c c c c b 
+b c c c c c c c c c c c c c c b 
+b c c c c c c c c c c c c c c b 
+b b b b b b b b b b b b b b b b 
+b e e e e e e e e e e e e e e b 
+b e e e e e e e e e e e e e e b 
+b c e e e e e e e e e e e e c b 
+b b b b b b b b b b b b b b b b 
+. b b . . . . . . . . . . b b . 
+`)
+    chest2.setKind(SpriteKind.box2)
 })
 controller.player1.onButtonEvent(ControllerButton.B, ControllerButtonEvent.Pressed, function () {
-    if (p1ammo > 0) {
+    if (p1ammo > 0 && player1.kind() != deadTest.kind()) {
         projectile1 = sprites.createProjectileFromSprite(img`
 . 2 2 2 2 2 . 
 2 2 2 2 2 2 2 
@@ -326,7 +365,7 @@ controller.player1.onButtonEvent(ControllerButton.B, ControllerButtonEvent.Press
     }
 })
 controller.player2.onButtonEvent(ControllerButton.A, ControllerButtonEvent.Pressed, function () {
-    if (p2ammo > 0) {
+    if (p2ammo > 0 && player2.kind() != deadTest.kind()) {
         projectile2 = sprites.createProjectileFromSprite(img`
 . 8 8 8 8 8 . 
 8 8 8 8 8 8 8 
@@ -344,8 +383,11 @@ sprites.onOverlap(SpriteKind.Player2, SpriteKind.Food, function (sprite, otherSp
     otherSprite.destroy(effects.fountain, 200)
     p2bag += 1
 })
+function closeChest (chest: Sprite) {
+	
+}
 controller.player2.onButtonEvent(ControllerButton.B, ControllerButtonEvent.Pressed, function () {
-    if (p2ammo > 0) {
+    if (p2ammo > 0 && player2.kind() != deadTest.kind()) {
         projectile2 = sprites.createProjectileFromSprite(img`
 . 8 8 8 8 8 . 
 8 8 8 8 8 8 8 
@@ -360,7 +402,7 @@ controller.player2.onButtonEvent(ControllerButton.B, ControllerButtonEvent.Press
     }
 })
 controller.player1.onButtonEvent(ControllerButton.A, ControllerButtonEvent.Pressed, function () {
-    if (p1ammo > 0) {
+    if (p1ammo > 0 && player1.kind() != deadTest.kind()) {
         projectile1 = sprites.createProjectileFromSprite(img`
 . 2 2 2 2 2 . 
 2 2 2 2 2 2 2 
@@ -377,6 +419,45 @@ controller.player1.onButtonEvent(ControllerButton.A, ControllerButtonEvent.Press
 sprites.onOverlap(SpriteKind.Player1, SpriteKind.box1, function (sprite, otherSprite) {
     info.player1.changeScoreBy(p1Bag)
     p1Bag = 0
+    chest1.setImage(img`
+. . b b b b b b b b b b b b . . 
+. b e 4 4 4 4 4 4 4 4 4 4 e b . 
+b e 4 4 4 4 4 4 4 4 4 4 4 4 e b 
+b e 4 4 4 4 4 4 4 4 4 4 4 4 e b 
+b e 4 4 4 4 4 4 4 4 4 4 4 4 e b 
+b e e 4 4 4 4 4 4 4 4 4 4 e e b 
+b e e e e e e e e e e e e e e b 
+b e e e e e e e e e e e e e e b 
+b b b b b b b d d b b b b b b b 
+c b b b b b b c c b b b b b b c 
+c c c c c c b c c b c c c c c c 
+b e e e e e c b b c e e e e e b 
+b e e e e e e e e e e e e e e b 
+b c e e e e e e e e e e e e c b 
+b b b b b b b b b b b b b b b b 
+. b b . . . . . . . . . . b b . 
+`)
+    chest1.setKind(SpriteKind.dead)
+    pause(15000)
+    chest1.setImage(img`
+. b b b b b b b b b b b b b b . 
+b e 4 4 4 4 4 4 4 4 4 4 4 4 4 b 
+b e 4 4 4 4 4 4 4 4 4 4 4 4 e b 
+b e e 4 4 4 4 4 4 4 4 4 4 e e b 
+b b b b b b b d d b b b b b b b 
+. b b b b b b c c b b b b b b . 
+b c c c c c b c c b c c c c c b 
+b c c c c c c b b c c c c c c b 
+b c c c c c c c c c c c c c c b 
+b c c c c c c c c c c c c c c b 
+b b b b b b b b b b b b b b b b 
+b e e e e e e e e e e e e e e b 
+b e e e e e e e e e e e e e e b 
+b c e e e e e e e e e e e e c b 
+b b b b b b b b b b b b b b b b 
+. b b . . . . . . . . . . b b . 
+`)
+    chest1.setKind(SpriteKind.box1)
 })
 sprites.onOverlap(SpriteKind.Player1, SpriteKind.prj2, function (sprite, otherSprite) {
     for (let index = 0; index < p1Bag; index++) {
@@ -565,6 +646,24 @@ b b b b b b b b b b b b b b b b
     p2count1.setPosition(155, 115)
     p2count2.setPosition(145, 115)
     p2count3.setPosition(135, 115)
+    deadTest = sprites.create(img`
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+`, SpriteKind.dead)
 }
 sprites.onOverlap(SpriteKind.Player1, SpriteKind.Food, function (sprite, otherSprite) {
     otherSprite.destroy(effects.fountain, 200)
@@ -576,14 +675,15 @@ let p2count1: Sprite = null
 let p1count3: Sprite = null
 let p1count2: Sprite = null
 let p1count1: Sprite = null
-let chest2: Sprite = null
 let chest1: Sprite = null
 let p1Bag = 0
 let projectile2: Sprite = null
 let p2ammo = 0
-let player1: Sprite = null
 let projectile1: Sprite = null
+let deadTest: Sprite = null
+let player1: Sprite = null
 let p1ammo = 0
+let chest2: Sprite = null
 let player2: Sprite = null
 let gem: Sprite = null
 let p2bag = 0
@@ -734,12 +834,14 @@ f 9 1 1 1 9 9 9 9 f
 forever(function () {
     if (info.player2.score() >= 5) {
         game.showLongText("Player 2 Wins! Press A to play again!", DialogLayout.Bottom)
+        effects.confetti.startScreenEffect()
         if (controller.A.isPressed()) {
             game.reset()
         }
     }
     if (info.player1.score() >= 5) {
         game.showLongText("Player 1 Wins! Press A to play again!", DialogLayout.Bottom)
+        effects.confetti.startScreenEffect()
         if (controller.A.isPressed()) {
             game.reset()
         }
