@@ -3,6 +3,9 @@ namespace SpriteKind {
     export const Player2 = SpriteKind.create()
     export const prj1 = SpriteKind.create()
     export const prj2 = SpriteKind.create()
+    export const box = SpriteKind.create()
+    export const box1 = SpriteKind.create()
+    export const box2 = SpriteKind.create()
 }
 namespace myTiles {
     //% blockIdentity=images._tile
@@ -273,7 +276,7 @@ d d d d d d d d d d d d d d d 2
 `
 }
 sprites.onOverlap(SpriteKind.Player2, SpriteKind.prj1, function (sprite, otherSprite) {
-    for (let index = 0; index < info.player2.score(); index++) {
+    for (let index = 0; index < p2bag; index++) {
         gem = sprites.create(img`
 . . . . f f . . . . 
 . . . f 9 9 f . . . 
@@ -292,9 +295,13 @@ f 9 1 1 1 9 9 9 9 f
 `, SpriteKind.Food)
         gem.setPosition(Math.randomRange(player2.x - 5, player2.x + 5), Math.randomRange(player2.y - 5, player2.x + 5))
     }
-    info.player2.setScore(0)
+    p2bag = 0
     player2.startEffect(effects.fire, 200)
-    player2.setPosition(150, Math.randomRange(10, 110))
+    player2.setPosition(150, Math.randomRange(20, 110))
+})
+sprites.onOverlap(SpriteKind.Player2, SpriteKind.box2, function (sprite, otherSprite) {
+    info.player2.changeScoreBy(p2bag)
+    p2bag = 0
 })
 controller.player1.onButtonEvent(ControllerButton.B, ControllerButtonEvent.Pressed, function () {
     projectile1 = sprites.createProjectileFromSprite(img`
@@ -322,7 +329,7 @@ controller.player2.onButtonEvent(ControllerButton.A, ControllerButtonEvent.Press
 })
 sprites.onOverlap(SpriteKind.Player2, SpriteKind.Food, function (sprite, otherSprite) {
     otherSprite.destroy(effects.fountain, 200)
-    info.player2.changeScoreBy(1)
+    p2bag += 1
 })
 controller.player2.onButtonEvent(ControllerButton.B, ControllerButtonEvent.Pressed, function () {
     projectile2 = sprites.createProjectileFromSprite(img`
@@ -348,8 +355,12 @@ controller.player1.onButtonEvent(ControllerButton.A, ControllerButtonEvent.Press
 `, player1, 150, 0)
     projectile1.setKind(SpriteKind.prj1)
 })
+sprites.onOverlap(SpriteKind.Player1, SpriteKind.box1, function (sprite, otherSprite) {
+    info.player1.changeScoreBy(p1Bag)
+    p1Bag = 0
+})
 sprites.onOverlap(SpriteKind.Player1, SpriteKind.prj2, function (sprite, otherSprite) {
-    for (let index = 0; index < info.player1.score(); index++) {
+    for (let index = 0; index < p1Bag; index++) {
         gem = sprites.create(img`
 . . . . f f . . . . 
 . . . f 9 9 f . . . 
@@ -368,17 +379,19 @@ f 9 1 1 1 9 9 9 9 f
 `, SpriteKind.Food)
         gem.setPosition(Math.randomRange(player1.x - 5, player1.x + 5), Math.randomRange(player1.y - 5, player1.x + 5))
     }
-    info.player1.setScore(0)
+    p1Bag = 0
     player1.startEffect(effects.fire, 200)
-    player1.setPosition(10, Math.randomRange(10, 110))
+    player1.setPosition(10, Math.randomRange(20, 110))
 })
 sprites.onOverlap(SpriteKind.Player1, SpriteKind.Food, function (sprite, otherSprite) {
     otherSprite.destroy(effects.fountain, 200)
-    info.player1.changeScoreBy(1)
+    p1Bag += 1
 })
+let p1Bag = 0
 let projectile2: Sprite = null
 let projectile1: Sprite = null
 let gem: Sprite = null
+let p2bag = 0
 let player2: Sprite = null
 let player1: Sprite = null
 player1 = sprites.create(img`
@@ -435,11 +448,49 @@ tiles.setTilemap(tiles.createTilemap(
 . . 2 . . . . 2 . . 
 . . . . . . . . . . 
 `,
-            [myTiles.tile0,myTiles.tile1,myTiles.tile2,myTiles.tile3,myTiles.tile4,myTiles.tile5,myTiles.tile6,sprites.dungeon.floorLight0,myTiles.tile7,myTiles.tile8,myTiles.tile9,myTiles.tile10,myTiles.tile11,myTiles.tile12,myTiles.tile13],
+            [myTiles.tile0,myTiles.tile1,myTiles.tile2,myTiles.tile3,myTiles.tile4,myTiles.tile5,myTiles.tile6,sprites.dungeon.floorLight0,myTiles.tile7,myTiles.tile8,myTiles.tile9,myTiles.tile10,myTiles.tile11,myTiles.tile12,myTiles.tile13,sprites.dungeon.chestClosed],
             TileScale.Sixteen
         ))
 info.player2.setScore(0)
 info.player1.setScore(0)
+let chest1 = sprites.create(img`
+. b b b b b b b b b b b b b b . 
+b e 4 4 4 4 4 4 4 4 4 4 4 4 4 b 
+b e 4 4 4 4 4 4 4 4 4 4 4 4 e b 
+b e e 4 4 4 4 4 4 4 4 4 4 e e b 
+b b b b b b b d d b b b b b b b 
+. b b b b b b c c b b b b b b . 
+b c c c c c b c c b c c c c c b 
+b c c c c c c b b c c c c c c b 
+b c c c c c c c c c c c c c c b 
+b c c c c c c c c c c c c c c b 
+b b b b b b b b b b b b b b b b 
+b e e e e e e e e e e e e e e b 
+b e e e e e e e e e e e e e e b 
+b c e e e e e e e e e e e e c b 
+b b b b b b b b b b b b b b b b 
+. b b . . . . . . . . . . b b . 
+`, SpriteKind.box1)
+chest1.setPosition(8, 16)
+let chest2 = sprites.create(img`
+. b b b b b b b b b b b b b b . 
+b e 4 4 4 4 4 4 4 4 4 4 4 4 4 b 
+b e 4 4 4 4 4 4 4 4 4 4 4 4 e b 
+b e e 4 4 4 4 4 4 4 4 4 4 e e b 
+b b b b b b b d d b b b b b b b 
+. b b b b b b c c b b b b b b . 
+b c c c c c b c c b c c c c c b 
+b c c c c c c b b c c c c c c b 
+b c c c c c c c c c c c c c c b 
+b c c c c c c c c c c c c c c b 
+b b b b b b b b b b b b b b b b 
+b e e e e e e e e e e e e e e b 
+b e e e e e e e e e e e e e e b 
+b c e e e e e e e e e e e e c b 
+b b b b b b b b b b b b b b b b 
+. b b . . . . . . . . . . b b . 
+`, SpriteKind.box2)
+chest2.setPosition(152, 16)
 game.onUpdateInterval(10000, function () {
     gem = sprites.create(img`
 . . . . f f . . . . 
