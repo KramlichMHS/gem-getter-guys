@@ -383,9 +383,6 @@ sprites.onOverlap(SpriteKind.Player2, SpriteKind.Food, function (sprite, otherSp
     otherSprite.destroy(effects.fountain, 200)
     p2bag += 1
 })
-function closeChest (chest: Sprite) {
-	
-}
 controller.player2.onButtonEvent(ControllerButton.B, ControllerButtonEvent.Pressed, function () {
     if (p2ammo > 0 && player2.kind() != deadTest.kind()) {
         projectile2 = sprites.createProjectileFromSprite(img`
@@ -529,8 +526,6 @@ function gameStart () {
     player2.setPosition(150, 60)
     player1.setFlag(SpriteFlag.StayInScreen, true)
     player2.setFlag(SpriteFlag.StayInScreen, true)
-    controller.moveSprite(player1, 75, 75)
-    controller.player2.moveSprite(player2, 75, 75)
     tiles.setTilemap(tiles.createTilemap(
             hex`0a0008000d04040404040404040e0d04070404040407040e0d04070407070407040e0d0404040c090404040e0d0404040b0a0404040e0d04070407070407040e0d04070404040407040e0d04040404040404040e`,
             img`
@@ -540,7 +535,7 @@ function gameStart () {
 . . . . . . . . . . 
 . . . . . . . . . . 
 . . 2 . 2 2 . 2 . . 
-. . 2 . . . . 2 . . 
+. . . . . . . . . . 
 . . . . . . . . . . 
 `,
             [myTiles.tile0,myTiles.tile1,myTiles.tile2,myTiles.tile3,myTiles.tile4,myTiles.tile5,myTiles.tile6,sprites.dungeon.floorLight0,myTiles.tile7,myTiles.tile8,myTiles.tile9,myTiles.tile10,myTiles.tile11,myTiles.tile12,myTiles.tile13,sprites.dungeon.chestClosed],
@@ -664,11 +659,147 @@ b b b b b b b b b b b b b b b b
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
 `, SpriteKind.dead)
+    countdown = sprites.create(img`
+. . . . f f f f f f f f f f f f f f f . . . . . . . . . . . . . . . . . . . . . 
+. . . . f f f f f f f f f f f f f f f . . . . . . . . . . . . . . . . . . . . . 
+. . . . f f f f f f f f f f f f f f f . . . . . . . . . . . . . . . . . . . . . 
+. f f f . . . . . . . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . 
+. f f f . . . . . . . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . 
+. f f f . . . . . . . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . 
+. f f f . . . . . . . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . 
+. f f f . . . . . . . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . 
+. f f f . . . . . . . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . f f f f f f f f f . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . f f f f f f f f f . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . f f f f f f f f f . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . 
+. f f f . . . . . . . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . 
+. f f f . . . . . . . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . 
+. f f f . . . . . . . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . 
+. f f f . . . . . . . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . 
+. f f f . . . . . . . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . 
+. f f f . . . . . . . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . 
+. . . . f f f f f f f f f f f f f f f . . . . . . f f f . . . f f f . . . f f f 
+. . . . f f f f f f f f f f f f f f f . . . . . . f f f . . . f f f . . . f f f 
+. . . . f f f f f f f f f f f f f f f . . . . . . f f f . . . f f f . . . f f f 
+`, SpriteKind.Player)
+    pause(1000)
+    countdown.setImage(img`
+. . . . f f f f f f f f f f f f f f f . . . . . . . . . . . . . . . . . . . . . 
+. . . . f f f f f f f f f f f f f f f . . . . . . . . . . . . . . . . . . . . . 
+. . . . f f f f f f f f f f f f f f f . . . . . . . . . . . . . . . . . . . . . 
+. f f f . . . . . . . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . 
+. f f f . . . . . . . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . 
+. f f f . . . . . . . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . 
+. f f f . . . . . . . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . 
+. f f f . . . . . . . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . 
+. f f f . . . . . . . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . f f f f f f . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . f f f f f f . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . f f f f f f . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . f f f f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . f f f f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. f f f f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. f f f f f f f f f f f f f f f f f f f f f . . . f f f . . . f f f . . . f f f 
+. f f f f f f f f f f f f f f f f f f f f f . . . f f f . . . f f f . . . f f f 
+. f f f f f f f f f f f f f f f f f f f f f . . . f f f . . . f f f . . . f f f 
+`)
+    pause(1000)
+    countdown.setImage(img`
+. . . . . . . f f f f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . f f f f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . f f f f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . f f f . . f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . f f f . . f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . f f f . . f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . f f f . . . . f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . f f f . . . . f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . f f f . . . . f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. f f f . . . . . . f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. f f f . . . . . . f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. f f f . . . . . . f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . f f f . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. f f f f f f f f f f f f f f f f f f f f f . . . f f f . . . f f f . . . f f f 
+. f f f f f f f f f f f f f f f f f f f f f . . . f f f . . . f f f . . . f f f 
+. f f f f f f f f f f f f f f f f f f f f f . . . f f f . . . f f f . . . f f f 
+`)
+    pause(1000)
+    countdown.setImage(img`
+. . . f f f f f f f f f f f f . . . . . . . . . f f f f f f f f f f f f . . . . . . f f f 
+. . . f f f f f f f f f f f f . . . . . . . . . f f f f f f f f f f f f . . . . . . f f f 
+. . . f f f f f f f f f f f f . . . . . . . . . f f f f f f f f f f f f . . . . . . f f f 
+f f f . . . . . . . . . . . . f f f . . . f f f . . . . . . . . . . . . f f f . . . f f f 
+f f f . . . . . . . . . . . . f f f . . . f f f . . . . . . . . . . . . f f f . . . f f f 
+f f f . . . . . . . . . . . . f f f . . . f f f . . . . . . . . . . . . f f f . . . f f f 
+f f f . . . . . . . . . . . . f f f . . . f f f . . . . . . . . . . . . f f f . . . f f f 
+f f f . . . . . . . . . . . . f f f . . . f f f . . . . . . . . . . . . f f f . . . f f f 
+f f f . . . . . . . . . . . . f f f . . . f f f . . . . . . . . . . . . f f f . . . f f f 
+f f f . . . . . . . . . . . . f f f . . . f f f . . . . . . . . . . . . f f f . . . f f f 
+f f f . . . . . . . . . . . . f f f . . . f f f . . . . . . . . . . . . f f f . . . f f f 
+f f f . . . . . . . . . . . . f f f . . . f f f . . . . . . . . . . . . f f f . . . f f f 
+f f f . . . . . . . . . . . . . . . . . . f f f . . . . . . . . . . . . f f f . . . f f f 
+f f f . . . . . . . . . . . . . . . . . . f f f . . . . . . . . . . . . f f f . . . f f f 
+f f f . . . . . . . . . . . . . . . . . . f f f . . . . . . . . . . . . f f f . . . f f f 
+f f f . . . . . f f f f f f f . . . . . . f f f . . . . . . . . . . . . f f f . . . f f f 
+f f f . . . . . f f f f f f f . . . . . . f f f . . . . . . . . . . . . f f f . . . f f f 
+f f f . . . . . f f f f f f f . . . . . . f f f . . . . . . . . . . . . f f f . . . f f f 
+f f f . . . . . . . . . . . . f f f . . . f f f . . . . . . . . . . . . f f f . . . f f f 
+f f f . . . . . . . . . . . . f f f . . . f f f . . . . . . . . . . . . f f f . . . f f f 
+f f f . . . . . . . . . . . . f f f . . . f f f . . . . . . . . . . . . f f f . . . f f f 
+f f f . . . . . . . . . . . . f f f . . . f f f . . . . . . . . . . . . f f f . . . f f f 
+f f f . . . . . . . . . . . . f f f . . . f f f . . . . . . . . . . . . f f f . . . f f f 
+f f f . . . . . . . . . . . . f f f . . . f f f . . . . . . . . . . . . f f f . . . . . . 
+f f f . . . . . . . . . . . . f f f . . . f f f . . . . . . . . . . . . f f f . . . . . . 
+f f f . . . . . . . . . . . . f f f . . . f f f . . . . . . . . . . . . f f f . . . f f f 
+f f f . . . . . . . . . . . . f f f . . . f f f . . . . . . . . . . . . f f f . . . f f f 
+. . . f f f f f f f f f f f f . . . . . . . . . f f f f f f f f f f f f . . . . . . f f f 
+. . . f f f f f f f f f f f f . . . . . . . . . f f f f f f f f f f f f . . . . . . f f f 
+. . . f f f f f f f f f f f f . . . . . . . . . f f f f f f f f f f f f . . . . . . f f f 
+`)
+    pause(1000)
+    countdown.destroy()
+    controller.player2.moveSprite(player2, 75, 75)
+    controller.moveSprite(player1, 75, 75)
 }
 sprites.onOverlap(SpriteKind.Player1, SpriteKind.Food, function (sprite, otherSprite) {
     otherSprite.destroy(effects.fountain, 200)
     p1Bag += 1
 })
+let countdown: Sprite = null
 let p2count3: Sprite = null
 let p2count2: Sprite = null
 let p2count1: Sprite = null
