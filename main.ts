@@ -940,7 +940,7 @@ c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
 c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c 
 `)
-game.showLongText("Fill your chest with 5 gems. The first person with a full chest wins!", DialogLayout.Bottom)
+game.showLongText("Fill your chest with 7 gems. The first person with a full chest wins!", DialogLayout.Bottom)
 game.showLongText("Be careful. If you get shot you will drop all the gems you are holding! Press A to start!", DialogLayout.Bottom)
 gameStart()
 game.onUpdateInterval(10000, function () {
